@@ -29,6 +29,7 @@ services:
       dockerfile: ./docker/dev/Dockerfile.server
     environment:
       PORT: ${API_PORT}
+    restart: always
     depends_on:
       - mongo
     ports:
@@ -38,6 +39,8 @@ services:
       - "traefik.http.routers.server.rule=Host(`api.localhost`)"
       - "traefik.http.routers.server.entrypoints=web"
       - "traefik.http.services.server.loadbalancer.server.port=${API_PORT}"
+    volumes:
+      - ./server:/app
 
   app:
     container_name: application
@@ -46,6 +49,7 @@ services:
       dockerfile: ./docker/dev/Dockerfile.app
     environment:
       PORT: ${APPLICATION_PORT}
+    restart: always
     depends_on:
       - mongo
       - server
@@ -56,9 +60,12 @@ services:
       - "traefik.http.routers.app.rule=Host(`app.localhost`)"
       - "traefik.http.routers.app.entrypoints=web"
       - "traefik.http.services.app.loadbalancer.server.port=${APPLICATION_PORT}"
+    volumes:
+      - ./app:/app
 
   worker:
     container_name: worker
+    restart: always
     build:
       context: .
       dockerfile: ./docker/dev/Dockerfile.worker
@@ -66,6 +73,8 @@ services:
       MONGO_URI: mongodb://${MONGODB_ROOT_USERNAME}:${MONGODB_ROOT_PASSWORD}@mongo:27017/${MONGO_WORKER_DB_NAME}?authSource=admin
     depends_on:
       - mongo
+    volumes:
+      - ./worker:/app
 
   mongo:
     container_name: mongodb

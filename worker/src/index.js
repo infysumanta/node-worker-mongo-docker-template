@@ -33,10 +33,10 @@ const task = cron.schedule("* * * * * *", async () => {
   try {
     const date = new Date().getTime();
     const jobID = date.toString();
-    console.log("JOB Executed", jobID);
+    // console.log("JOB Executed", jobID);
     const worker = new Worker({ jobID });
     await worker.save();
-    console.log("JOB Executed", jobID);
+    // console.log("JOB Executed", jobID);
   } catch (error) {
     console.log(error.message);
   }
