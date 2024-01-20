@@ -1,0 +1,11 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY worker/package*.json /app
+
+RUN npm install
+
+COPY worker/src /app/src
+
+CMD ["npm", "run", "dev"]

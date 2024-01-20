@@ -26,7 +26,7 @@ services:
     container_name: application-server
     build:
       context: .
-      dockerfile: Dockerfile.server
+      dockerfile: ./docker/dev/Dockerfile.server
     environment:
       PORT: ${API_PORT}
     depends_on:
@@ -43,7 +43,7 @@ services:
     container_name: application
     build:
       context: .
-      dockerfile: Dockerfile.app
+      dockerfile: ./docker/dev/Dockerfile.app
     environment:
       PORT: ${APPLICATION_PORT}
     depends_on:
@@ -61,7 +61,7 @@ services:
     container_name: worker
     build:
       context: .
-      dockerfile: Dockerfile.worker
+      dockerfile: ./docker/dev/Dockerfile.worker
     environment:
       MONGO_URI: mongodb://${MONGODB_ROOT_USERNAME}:${MONGODB_ROOT_PASSWORD}@mongo:27017/${MONGO_WORKER_DB_NAME}?authSource=admin
     depends_on:
