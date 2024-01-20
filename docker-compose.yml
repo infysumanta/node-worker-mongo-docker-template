@@ -13,9 +13,14 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
+      # - 8080:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
 
   app:
     container_name: application
@@ -26,8 +31,8 @@ services:
       PORT: ${APPLICATION_PORT}
     depends_on:
       - mongo
-    ports:
-      - ${APPLICATION_PORT}:${APPLICATION_PORT}
+    # ports:
+    # - ${APPLICATION_PORT}:${APPLICATION_PORT}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app.rule=Host(`app.localhost`)"
@@ -56,9 +61,14 @@ services:
     container_name: mongo-express
     image: mongo-express
     restart: always
-    ports:
-      - 8081:8081
+    # ports:
+    # - 8081:8081
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGODB_ROOT_USERNAME}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGODB_ROOT_PASSWORD}
       ME_CONFIG_MONGODB_URL: mongodb://${MONGODB_ROOT_USERNAME}:${MONGODB_ROOT_PASSWORD}@mongo:27017/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mongoexpress.rule=Host(`mongo-express.localhost`)"
+      - "traefik.http.routers.mongoexpress.entrypoints=web"
+      - "traefik.http.services.mongoexpress.loadbalancer.server.port=8081"
