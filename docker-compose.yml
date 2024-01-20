@@ -1,6 +1,19 @@
 version: "3"
 services:
   app:
+    container_name: application
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    environment:
+      PORT: ${APPLICATION_PORT}
+    depends_on:
+      - mongo
+    ports:
+      - ${APPLICATION_PORT}:${APPLICATION_PORT}
+
+  worker:
+    container_name: worker
     build:
       context: .
       dockerfile: Dockerfile.worker
@@ -10,6 +23,7 @@ services:
       - mongo
 
   mongo:
+    container_name: mongodb
     image: mongo
     restart: always
     environment:
@@ -17,6 +31,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD}
 
   mongo-express:
+    container_name: mongo-express
     image: mongo-express
     restart: always
     ports:
